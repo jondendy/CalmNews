@@ -1,471 +1,482 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dad's News Home</title>
-  <meta name="description" content="A calm, fact-first homepage with a choice of Little Issues or Big Issues text size.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root, [data-theme="light"] {
-      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-      --text-sm: clamp(0.95rem, 0.9rem + 0.3vw, 1.05rem);
-      --text-base: clamp(1.06rem, 1rem + 0.35vw, 1.2rem);
-      --text-lg: clamp(1.2rem, 1.05rem + 0.8vw, 1.6rem);
-      --text-xl: clamp(1.65rem, 1.3rem + 1.2vw, 2.4rem);
-      --text-2xl: clamp(2.3rem, 1.4rem + 2.6vw, 3.9rem);
-      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem;
-      --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem; --space-20: 5rem;
-      --color-bg: #f7f6f2; --color-surface: #f9f8f5; --color-surface-2: #fbfbf9; --color-surface-offset: #edeae5;
-      --color-border: #d4d1ca; --color-divider: #dcd9d5; --color-text: #28251d; --color-text-muted: #66645f; --color-text-faint: #8d8a84;
-      --color-primary: #01696f; --color-primary-hover: #0c4e54; --color-primary-highlight: #cedcd8;
-      --radius-sm: 0.375rem; --radius-md: 0.5rem; --radius-lg: 0.75rem; --radius-xl: 1rem; --radius-full: 9999px;
-      --shadow-sm: 0 1px 2px rgba(40,37,29,0.06); --shadow-md: 0 10px 24px rgba(40,37,29,0.08);
-      --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1); --font-display: 'Instrument Serif', Georgia, serif; --font-body: 'Work Sans', system-ui, sans-serif; --content: 1180px;
-      --ui-scale: 1;
-    }
-    [data-theme="dark"] {
-      --color-bg: #171614; --color-surface: #1c1b19; --color-surface-2: #201f1d; --color-surface-offset: #22211f;
-      --color-border: #393836; --color-divider: #262523; --color-text: #e7e3dc; --color-text-muted: #b0aca4; --color-text-faint: #88847d;
-      --color-primary: #4f98a3; --color-primary-hover: #6faeb7; --color-primary-highlight: #313b3b;
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.22); --shadow-md: 0 10px 24px rgba(0,0,0,0.35);
-    }
-    html[data-size="big"] { --ui-scale: 1.24; }
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme]) {
-        --color-bg: #171614; --color-surface: #1c1b19; --color-surface-2: #201f1d; --color-surface-offset: #22211f;
-        --color-border: #393836; --color-divider: #262523; --color-text: #e7e3dc; --color-text-muted: #b0aca4; --color-text-faint: #88847d; --color-primary: #4f98a3; --color-primary-hover: #6faeb7; --color-primary-highlight: #313b3b;
-      }
-    }
-    *, *::before, *::after { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0; min-height: 100vh; background: var(--color-bg); color: var(--color-text);
-      font: 400 calc(var(--text-base) * var(--ui-scale))/1.65 var(--font-body);
-      background-image: radial-gradient(circle at top right, var(--color-primary-highlight), transparent 28%);
-    }
-    a, button { transition: background var(--transition), color var(--transition), border-color var(--transition), transform var(--transition); }
-    a { color: inherit; }
-    .skip-link { position: absolute; left: -999px; top: var(--space-2); }
-    .skip-link:focus { left: var(--space-2); background: var(--color-primary); color: white; padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); }
-    .shell { max-width: var(--content); margin: 0 auto; padding: var(--space-4); }
-    .topbar {
-      position: sticky; top: 0; z-index: 20; backdrop-filter: blur(12px);
-      background: color-mix(in srgb, var(--color-bg) 88%, transparent);
-      border-bottom: 1px solid var(--color-divider);
-    }
-    .topbar-inner { max-width: var(--content); margin: 0 auto; padding: var(--space-3) var(--space-4); display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
-    .brand { display: flex; align-items: center; gap: var(--space-3); text-decoration: none; }
-    .logo { width: 36px; height: 36px; color: var(--color-primary); flex: none; }
-    .brand-text strong { display: block; font-size: calc(var(--text-sm) * var(--ui-scale)); }
-    .brand-text span { display: block; font-size: calc(var(--text-xs) * var(--ui-scale)); color: var(--color-text-muted); }
-    .topbar-actions { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; }
-    .theme-toggle, .size-toggle {
-      min-width: 44px; min-height: 44px; border-radius: var(--radius-full); border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text);
-      display: inline-flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); padding: 0 var(--space-3); font-weight: 600;
-    }
-    .theme-toggle:hover, .size-toggle:hover, .theme-toggle:focus-visible, .size-toggle:focus-visible { background: var(--color-surface-2); }
-    .hero { padding: clamp(var(--space-8), 8vw, var(--space-20)) 0 var(--space-10); display: grid; grid-template-columns: 1.15fr 0.85fr; gap: var(--space-8); align-items: start; }
-    .eyebrow { display: inline-flex; gap: var(--space-2); align-items: center; padding: var(--space-2) var(--space-3); background: var(--color-primary-highlight); border-radius: var(--radius-full); color: var(--color-primary); font-size: calc(var(--text-xs) * var(--ui-scale)); font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; }
-    h1 { font-family: var(--font-display); font-weight: 400; font-size: calc(var(--text-2xl) * var(--ui-scale)); line-height: 1.02; letter-spacing: -0.02em; margin: var(--space-4) 0; max-width: 11ch; }
-    .lead { color: var(--color-text-muted); max-width: 58ch; }
-    .hero-card, .section-card, .link-card { background: color-mix(in srgb, var(--color-surface) 92%, transparent); border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
-    .hero-card, .section-card { padding: var(--space-5); }
-    .hero-card h2, .section-card h2 { font-size: calc(var(--text-lg) * var(--ui-scale)); margin: 0 0 var(--space-2); }
-    .hero-card p, .section-card p { color: var(--color-text-muted); margin: 0; }
-    .quick-links, .mode-links { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5); }
-    .pill { text-decoration: none; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; padding: 0 var(--space-4); border-radius: var(--radius-full); border: 1px solid var(--color-border); background: var(--color-surface); font-size: calc(var(--text-sm) * var(--ui-scale)); font-weight: 600; }
-    .pill.primary { background: var(--color-primary); color: white; border-color: var(--color-primary); }
-    .pill:hover { transform: translateY(-1px); }
-    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); margin-top: var(--space-4); }
-    .section-head { display: flex; align-items: end; justify-content: space-between; gap: var(--space-4); margin: var(--space-10) 0 var(--space-4); }
-    .section-head h2 { font-family: var(--font-display); font-size: calc(var(--text-xl) * var(--ui-scale)); font-weight: 400; margin: 0; }
-    .section-head p { margin: 0; color: var(--color-text-muted); max-width: 52ch; }
-    .links { display: grid; gap: var(--space-3); margin-top: var(--space-4); }
-    .link-card { padding: var(--space-4); text-decoration: none; display: block; background: var(--color-surface-2); }
-    .link-card:hover, .link-card:focus-visible { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
-    .link-card strong { display: block; font-size: calc(var(--text-base) * var(--ui-scale)); margin-bottom: var(--space-1); }
-    .meta { font-size: calc(var(--text-xs) * var(--ui-scale)); color: var(--color-text-faint); margin-top: var(--space-2); }
-    .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: var(--space-5); }
-    .tip-list { padding-left: 1.1rem; margin: var(--space-3) 0 0; }
-    .tip-list li { margin-bottom: var(--space-2); }
-    .chooser { margin-top: var(--space-5); }
-    .chooser p { margin: 0 0 var(--space-3); color: var(--color-text-muted); }
-    footer { padding: var(--space-12) 0 var(--space-8); color: var(--color-text-muted); font-size: calc(var(--text-sm) * var(--ui-scale)); }
-    .footer-box { padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: var(--color-surface); }
-    .small { font-size: calc(var(--text-xs) * var(--ui-scale)); color: var(--color-text-faint); }
-    @media (max-width: 900px) {
-      .hero, .grid, .two-col { grid-template-columns: 1fr; }
-      h1 { max-width: none; }
-      .section-head { display: block; }
-      .section-head p { margin-top: var(--space-2); }
-    }
-  </style>
-</head>
-<body>
-  <a class="skip-link" href="#main">Skip to content</a>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a class="brand" href="#top" aria-label="Calm News for Christchurch">
-        <svg class="logo" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-          <rect x="4" y="6" width="40" height="30" rx="8" stroke="currentColor" stroke-width="3"></rect>
-          <path d="M12 16H36M12 23H29M12 30H24" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-          <path d="M32 36L40 42" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-        </svg>
-        <div class="brand-text">
-          <strong>Calm News for Christchurch</strong>
-          <span>Text size only: Little Issues or Big Issues</span>
-        </div>
-      </a>
-      <div class="topbar-actions">
-        <button class="size-toggle" type="button" data-size-toggle aria-label="Switch text size">Big Issues</button>
-        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme"></button>
-      </div>
-    </div>
-  </header>
-  <main id="main" class="shell">
-    <section class="hero" id="top">
-      <div>
-        <div class="eyebrow">Calm news home page</div>
-        <h1>Calm News for Christchurch &amp; Highcliffe</h1>
-        <p class="lead">A single calm starting point for faith stories, Christchurch and Highcliffe local news, UK government, and world events. Use the button above to choose <strong>Little Issues</strong> for smaller text or <strong>Big Issues</strong> for larger text — these names only refer to text size, not the importance of the news.</p>
-        <nav class="quick-links" aria-label="Quick sections">
-          <a class="pill primary" href="#local">Local news</a>
-          <a class="pill" href="#faith">Faith stories</a>
-          <a class="pill" href="#positive">Positive news</a>
-          <a class="pill" href="#uk">UK government</a>
-          <a class="pill" href="#world">World news</a>
-          <a class="pill" href="#perspectives">Other perspectives</a>
-        </nav>
-        <div class="chooser hero-card">
-          <h2>Reading size (text only)</h2>
-          <p>Pick the version that feels easiest on the eyes. Little Issues means smaller text. Big Issues means larger text only — not more serious news.</p>
-          <div class="mode-links" aria-label="Reading size choices">
-            <a class="pill primary" href="#" data-size-link="little">Little Issues</a>
-            <a class="pill" href="#" data-size-link="big">Big Issues</a>
-          </div>
-        </div>
-      </div>
-      <aside class="hero-card" aria-labelledby="start-here">
-        <h2 id="start-here">Suggested routine</h2>
-        <p>Keep it gentle: start local, check one UK page, read one world headline source, then finish with something faith-based or uplifting.</p>
-        <ul class="tip-list">
-          <li>Use the Big Issues button if you prefer large print on a Fire tablet.</li>
-          <li>Leave this page as the browser home page so it opens first.</li>
-          <li>Turn off autoplay in YouTube so this page becomes the main habit instead.</li>
-          <li>Check <strong>Positive news</strong> for uplifting stories to balance the day.</li>
-        </ul>
-      </aside>
-    </section>
-
-    <section id="local" aria-labelledby="local-title">
-      <div class="section-head">
-        <h2 id="local-title">Local: Christchurch &amp; Highcliffe</h2>
-        <p>Local links for council decisions, planning, and nearby reporting around Bournemouth, Christchurch and Poole.</p>
-      </div>
-      <div class="grid">
-        <article class="section-card">
-          <h2>Official local sources</h2>
-          <p>Best for decisions, meetings, planning, neighbourhood changes, and council announcements.</p>
-          <div class="links">
-            <a class="link-card" href="https://www.bcpcouncil.gov.uk/news-hub" target="_blank" rel="noopener noreferrer">
-              <strong>BCP Council News Hub</strong>
-              Official Bournemouth, Christchurch and Poole Council news, projects and service updates.
-              <div class="meta">Roadworks, local schemes, services and council announcements.</div>
-            </a>
-            <a class="link-card" href="https://democracy.bcpcouncil.gov.uk/ieListMeetings.aspx?Act=earlier&D=202503201000&MD=ielistmeetings" target="_blank" rel="noopener noreferrer">
-              <strong>BCP Planning Meetings</strong>
-              Formal meeting pages with agendas and committee records.
-              <div class="meta">Useful for the direct paperwork rather than commentary.</div>
-            </a>
-            <a class="link-card" href="https://www.bcpcouncil.gov.uk/planning-and-building-control/planning-policy/neighbourhood-planning/completed-plans/highcliffe-and-walkford-neighbourhood-plan" target="_blank" rel="noopener noreferrer">
-              <strong>Highcliffe &amp; Walkford Neighbourhood Plan</strong>
-              Planning policy and neighbourhood information specific to Highcliffe and Walkford.
-              <div class="meta">Helpful for local development and planning context.</div>
-            </a>
-          </div>
-        </article>
-        <article class="section-card">
-          <h2>Independent local reporting</h2>
-          <p>Useful as a second view alongside council material.</p>
-          <div class="links">
-            <a class="link-card" href="https://www.bbc.com/news/topics/crx6dnl749jt" target="_blank" rel="noopener noreferrer">
-              <strong>BBC: BCP Council topic page</strong>
-              BBC reporting linked to Bournemouth, Christchurch and Poole Council stories.
-              <div class="meta">A practical independent check against the council version.</div>
-            </a>
-            <a class="link-card" href="https://www.bbc.com/news/england/dorset" target="_blank" rel="noopener noreferrer">
-              <strong>BBC Dorset</strong>
-              Wider Dorset reporting with local transport, council and community stories.
-              <div class="meta">A good once-a-day local overview.</div>
-            </a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section id="faith" aria-labelledby="faith-title">
-      <div class="section-head">
-        <h2 id="faith-title">Faith and Christian news</h2>
-        <p>Christian and faith-based links without the emotionally loaded video-feed effect.</p>
-      </div>
-      <div class="grid">
-        <article class="section-card">
-          <h2>UK faith coverage</h2>
-          <div class="links">
-            <a class="link-card" href="https://premierchristian.news/?_locale=en" target="_blank" rel="noopener noreferrer">
-              <strong>Premier Christian News</strong>
-              UK-based Christian news with stories on public life, culture, and church life.
-              <div class="meta">The main faith-news bookmark.</div>
-            </a>
-            <a class="link-card" href="https://www.e-n.org.uk" target="_blank" rel="noopener noreferrer">
-              <strong>Evangelicals Now</strong>
-              Monthly Christian newspaper with UK and world coverage from an evangelical perspective.
-              <div class="meta">Slower and more reflective than social feeds.</div>
-            </a>
-          </div>
-        </article>
-        <article class="section-card">
-          <h2>Gentler round-ups</h2>
-          <div class="links">
-            <a class="link-card" href="https://thepourover.org" target="_blank" rel="noopener noreferrer">
-              <strong>The Pour Over</strong>
-              Short news round-ups with a Christian tone and an explicit attempt to stay politically neutral.
-              <div class="meta">Brief and low-drama.</div>
-            </a>
-            <a class="link-card" href="https://www.goodnews-paper.org.uk" target="_blank" rel="noopener noreferrer">
-              <strong>Good News newspaper</strong>
-              More testimonies and uplifting stories than hard news.
-              <div class="meta">Useful when you want something encouraging.</div>
-            </a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section id="positive" aria-labelledby="positive-title">
-      <div class="section-head">
-        <h2 id="positive-title">Positive news</h2>
-        <p>Uplifting stories and solutions-focused journalism to balance the harder news.</p>
-      </div>
-      <div class="grid">
-        <article class="section-card">
-          <h2>Uplifting journalism</h2>
-          <div class="links">
-            <a class="link-card" href="https://www.positive.news" target="_blank" rel="noopener noreferrer">
-              <strong>Positive News</strong>
-              UK-based magazine for "good journalism about good things," focusing on solutions and progress.
-              <div class="meta">Great for a more hopeful perspective.</div>
-            </a>
-            <a class="link-card" href="https://www.goodnewsnetwork.org" target="_blank" rel="noopener noreferrer">
-              <strong>Good News Network</strong>
-              A long-running source for positive news stories from around the world.
-              <div class="meta">Good for a quick mood boost.</div>
-            </a>
-          </div>
-        </article>
-        <article class="section-card">
-          <h2>Daily inspiration</h2>
-          <div class="links">
-            <a class="link-card" href="https://www.dailygood.org" target="_blank" rel="noopener noreferrer">
-              <strong>DailyGood</strong>
-              Ad-free stories of kindness and community.
-              <div class="meta">One inspiring story per day.</div>
-            </a>
-            <a class="link-card" href="https://www.optimistdaily.com" target="_blank" rel="noopener noreferrer">
-              <strong>The Optimist Daily</strong>
-              Focuses on solutions for climate, health, and society.
-              <div class="meta">A proactive look at the world.</div>
-            </a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section id="uk" aria-labelledby="uk-title">
-      <div class="section-head">
-        <h2 id="uk-title">UK government and politics</h2>
-        <p>One official source plus two reporting sources makes a good honest mix.</p>
-      </div>
-      <div class="two-col">
-        <article class="section-card">
-          <h2>Official UK sources</h2>
-          <div class="links">
-            <a class="link-card" href="https://www.gov.uk/government/news" target="_blank" rel="noopener noreferrer">
-              <strong>GOV.UK News and Communications</strong>
-              Official UK Government announcements, statements and press releases.
-              <div class="meta">Best for the government's own wording.</div>
-            </a>
-            <a class="link-card" href="https://hansard.parliament.uk" target="_blank" rel="noopener noreferrer">
-              <strong>Hansard</strong>
-              The official report of what was said in Parliament.
-              <div class="meta">Very useful for checking what was actually said.</div>
-            </a>
-          </div>
-        </article>
-        <article class="section-card">
-          <h2>Reporting and context</h2>
-          <div class="links">
-            <a class="link-card" href="https://www.bbc.com/news/politics" target="_blank" rel="noopener noreferrer">
-              <strong>BBC Politics</strong>
-              Straightforward Westminster coverage and explainers.
-              <div class="meta">Good for regular use.</div>
-            </a>
-            <a class="link-card" href="https://news.sky.com/politics" target="_blank" rel="noopener noreferrer">
-              <strong>Sky News Politics</strong>
-              A second reporting angle on government and Parliament.
-              <div class="meta">Useful for comparison.</div>
-            </a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section id="world" aria-labelledby="world-title">
-      <div class="section-head">
-        <h2 id="world-title">World news</h2>
-        <p>Practical global pages to check once or twice a day without getting pulled into a recommendation engine.</p>
-      </div>
-      <div class="grid">
-        <article class="section-card">
-          <h2>Wire services</h2>
-          <div class="links">
-            <a class="link-card" href="https://www.reuters.com/world/" target="_blank" rel="noopener noreferrer">
-              <strong>Reuters World</strong>
-              Plain global reporting with minimal spin and clean headlines.
-              <div class="meta">Ideal default homepage.</div>
-            </a>
-            <a class="link-card" href="https://apnews.com/hub/world-news" target="_blank" rel="noopener noreferrer">
-              <strong>AP World News</strong>
-              Another fact-first world page with concise reporting.
-              <div class="meta">Good as a second check.</div>
-            </a>
-          </div>
-        </article>
-        <article class="section-card">
-          <h2>Broader context</h2>
-          <div class="links">
-            <a class="link-card" href="https://www.bbc.com/news/world" target="_blank" rel="noopener noreferrer">
-              <strong>BBC World</strong>
-              Helpful explainers and summaries for the biggest stories.
-              <div class="meta">Useful after Reuters or AP.</div>
-            </a>
-            <a class="link-card" href="https://www.euronews.com/news/international" target="_blank" rel="noopener noreferrer">
-              <strong>Euronews International</strong>
-              European and international coverage without the feel of social video feeds.
-              <div class="meta">Handy for Europe-facing news.</div>
-            </a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section id="perspectives" aria-labelledby="perspectives-title">
-      <div class="section-head">
-        <h2 id="perspectives-title">Other perspectives</h2>
-        <p>Thoughtful opinion and long-form analysis as a calmer alternative to television news channels. Full Fact is here to check any claim before believing it.</p>
-      </div>
-      <div class="grid">
-        <article class="section-card">
-          <h2>Opinion and analysis</h2>
-          <p>These cover British politics and culture from outside the mainstream consensus, without the shouting.</p>
-          <div class="links">
-            <a class="link-card" href="https://unherd.com" target="_blank" rel="noopener noreferrer">
-              <strong>UnHerd</strong>
-              Long-form articles and video interviews that question mainstream thinking from multiple directions — not just one side.
-              <div class="meta">Slower and more considered than TV news channels.</div>
-            </a>
-            <a class="link-card" href="https://www.spectator.co.uk" target="_blank" rel="noopener noreferrer">
-              <strong>The Spectator</strong>
-              Britain’s oldest weekly magazine, centre-right in outlook, witty and readable, with strong UK politics and culture coverage.
-              <div class="meta">In print since 1828. Free articles available without a subscription.</div>
-            </a>
-            <a class="link-card" href="https://thecritic.co.uk" target="_blank" rel="noopener noreferrer">
-              <strong>The Critic</strong>
-              A newer British magazine with a similar feel to The Spectator — conservative-leaning, measured in tone, and often genuinely funny.
-              <div class="meta">Low on outrage, high on opinion and culture.</div>
-            </a>
-          </div>
-        </article>
-        <article class="section-card">
-          <h2>Fact checking</h2>
-          <p>Before believing a worrying headline or sharing a story, check here first.</p>
-          <div class="links">
-            <a class="link-card" href="https://fullfact.org" target="_blank" rel="noopener noreferrer">
-              <strong>Full Fact</strong>
-              The UK’s independent fact-checking organisation. Checks claims made by politicians, news outlets and viral stories.
-              <div class="meta">Very useful companion to any news source, especially television news.</div>
-            </a>
-            <a class="link-card" href="https://www.bbc.com/news/reality_check" target="_blank" rel="noopener noreferrer">
-              <strong>BBC Reality Check</strong>
-              BBC’s own fact-checking and explainer service for claims in the news.
-              <div class="meta">Good for a quick second opinion on a big story.</div>
-            </a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <footer>
-      <div class="footer-box">
-        <p>Calm News for Christchurch — a simple, calm homepage for faith, local, UK government and world news.</p>
-        <p class="small">Little Issues = smaller text  •  Big Issues = larger text  •  text size only, not news importance.</p>
-      </div>
-    </footer>
-  </main>
-
-  <script>
-    (function () {
-      var root = document.documentElement;
-      var themeButton = document.querySelector('[data-theme-toggle]');
-      var sizeButton = document.querySelector('[data-size-toggle]');
-      var sizeLinks = document.querySelectorAll('[data-size-link]');
-      var theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      var size = 'little';
-
-      function updateThemeButton() {
-        themeButton.innerHTML = theme === 'dark'
-          ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>'
-          : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
-        themeButton.setAttribute('aria-label', 'Switch to ' + (theme === 'dark' ? 'light' : 'dark') + ' mode');
-      }
-
-      function updateSizeUI() {
-        root.setAttribute('data-size', size === 'big' ? 'big' : 'little');
-        sizeButton.textContent = size === 'big' ? 'Little Issues' : 'Big Issues';
-        sizeButton.setAttribute('aria-label', 'Text size is ' + (size === 'big' ? 'Big Issues (larger text)' : 'Little Issues (smaller text)') + '. Click to switch.');
-        
-        sizeLinks.forEach(function (link) {
-          var active = link.getAttribute('data-size-link') === size;
-          link.classList.toggle('primary', active);
-        });
-      }
-
-      root.setAttribute('data-theme', theme);
-      updateThemeButton();
-      updateSizeUI();
-
-      themeButton.addEventListener('click', function () {
-        theme = theme === 'dark' ? 'light' : 'dark';
-        root.setAttribute('data-theme', theme);
-        updateThemeButton();
-      });
-
-      sizeButton.addEventListener('click', function () {
-        size = size === 'big' ? 'little' : 'big';
-        updateSizeUI();
-      });
-
-      sizeLinks.forEach(function (link) {
-        link.addEventListener('click', function (event) {
-          event.preventDefault();
-          size = link.getAttribute('data-size-link');
-          updateSizeUI();
-        });
-      });
-    })();
-  </script>
-</body>
-</html>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>Dad's News Home</title>
+ <meta name="description" content="A calm, fact-first homepage with a choice of Little Issues or Big Issues text size.">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+ <style>
+ :root, [data-theme="light"] {
+ --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+ --text-sm: clamp(0.95rem, 0.9rem + 0.3vw, 1.05rem);
+ --text-base: clamp(1.06rem, 1rem + 0.35vw, 1.2rem);
+ --text-lg: clamp(1.2rem, 1.05rem + 0.8vw, 1.6rem);
+ --text-xl: clamp(1.65rem, 1.3rem + 1.2vw, 2.4rem);
+ --text-2xl: clamp(2.3rem, 1.4rem + 2.6vw, 3.9rem);
+ --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem;
+ --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem; --space-20: 5rem;
+ --color-bg: #f7f6f2; --color-surface: #f9f8f5; --color-surface-2: #fbfbf9; --color-surface-offset: #edeae5;
+ --color-border: #d4d1ca; --color-divider: #dcd9d5; --color-text: #28251d; --color-text-muted: #66645f; --color-text-faint: #8d8a84;
+ --color-primary: #01696f; --color-primary-hover: #0c4e54; --color-primary-highlight: #cedcd8;
+ --radius-sm: 0.375rem; --radius-md: 0.5rem; --radius-lg: 0.75rem; --radius-xl: 1rem; --radius-full: 9999px;
+ --shadow-sm: 0 1px 2px rgba(40,37,29,0.06); --shadow-md: 0 10px 24px rgba(40,37,29,0.08);
+ --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1); --font-display: 'Instrument Serif', Georgia, serif; --font-body: 'Work Sans', system-ui, sans-serif; --content: 1180px;
+ --ui-scale: 1;
+ }
+ [data-theme="dark"] {
+ --color-bg: #171614; --color-surface: #1c1b19; --color-surface-2: #201f1d; --color-surface-offset: #22211f;
+ --color-border: #393836; --color-divider: #262523; --color-text: #e7e3dc; --color-text-muted: #b0aca4; --color-text-faint: #88847d;
+ --color-primary: #4f98a3; --color-primary-hover: #6faeb7; --color-primary-highlight: #313b3b;
+ --shadow-sm: 0 1px 2px rgba(0,0,0,0.22); --shadow-md: 0 10px 24px rgba(0,0,0,0.35);
+ }
+ html[data-size="big"] { --ui-scale: 1.24; }
+ @media (prefers-color-scheme: dark) {
+ :root:not([data-theme]) {
+ --color-bg: #171614; --color-surface: #1c1b19; --color-surface-2: #201f1d; --color-surface-offset: #22211f;
+ --color-border: #393836; --color-divider: #262523; --color-text: #e7e3dc; --color-text-muted: #b0aca4; --color-text-faint: #88847d; --color-primary: #4f98a3; --color-primary-hover: #6faeb7; --color-primary-highlight: #313b3b;
+ }
+ }
+ *, *::before, *::after { box-sizing: border-box; }
+ html { scroll-behavior: smooth; }
+ body {
+ margin: 0; min-height: 100vh; background: var(--color-bg); color: var(--color-text);
+ font: 400 calc(var(--text-base) * var(--ui-scale))/1.65 var(--font-body);
+ background-image: radial-gradient(circle at top right, var(--color-primary-highlight), transparent 28%);
+ }
+ a, button { transition: background var(--transition), color var(--transition), border-color var(--transition), transform var(--transition); }
+ a { color: inherit; }
+ .skip-link { position: absolute; left: -999px; top: var(--space-2); }
+ .skip-link:focus { left: var(--space-2); background: var(--color-primary); color: white; padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); }
+ .shell { max-width: var(--content); margin: 0 auto; padding: var(--space-4); }
+ .topbar {
+ position: sticky; top: 0; z-index: 20; backdrop-filter: blur(12px);
+ background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+ border-bottom: 1px solid var(--color-divider);
+ }
+ .topbar-inner { max-width: var(--content); margin: 0 auto; padding: var(--space-3) var(--space-4); display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
+ .brand { display: flex; align-items: center; gap: var(--space-3); text-decoration: none; }
+ .logo { width: 36px; height: 36px; color: var(--color-primary); flex: none; }
+ .brand-text strong { display: block; font-size: calc(var(--text-sm) * var(--ui-scale)); }
+ .brand-text span { display: block; font-size: calc(var(--text-xs) * var(--ui-scale)); color: var(--color-text-muted); }
+ .topbar-actions { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; }
+ .theme-toggle, .size-toggle {
+ min-width: 44px; min-height: 44px; border-radius: var(--radius-full); border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text);
+ display: inline-flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); padding: 0 var(--space-3); font-weight: 600;
+ }
+ .theme-toggle:hover, .size-toggle:hover, .theme-toggle:focus-visible, .size-toggle:focus-visible { background: var(--color-surface-2); }
+ .hero { padding: clamp(var(--space-8), 8vw, var(--space-20)) 0 var(--space-10); display: grid; grid-template-columns: 1.15fr 0.85fr; gap: var(--space-8); align-items: start; }
+ .eyebrow { display: inline-flex; gap: var(--space-2); align-items: center; padding: var(--space-2) var(--space-3); background: var(--color-primary-highlight); border-radius: var(--radius-full); color: var(--color-primary); font-size: calc(var(--text-xs) * var(--ui-scale)); font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; }
+ h1 { font-family: var(--font-display); font-weight: 400; font-size: calc(var(--text-2xl) * var(--ui-scale)); line-height: 1.02; letter-spacing: -0.02em; margin: var(--space-4) 0; max-width: 11ch; }
+ .lead { color: var(--color-text-muted); max-width: 58ch; }
+ .hero-card, .section-card, .link-card { background: color-mix(in srgb, var(--color-surface) 92%, transparent); border: 1px solid var(--color-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
+ .hero-card, .section-card { padding: var(--space-5); }
+ .hero-card h2, .section-card h2 { font-size: calc(var(--text-lg) * var(--ui-scale)); margin: 0 0 var(--space-2); }
+ .hero-card p, .section-card p { color: var(--color-text-muted); margin: 0; }
+ .quick-links, .mode-links { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5); }
+ .pill { text-decoration: none; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; padding: 0 var(--space-4); border-radius: var(--radius-full); border: 1px solid var(--color-border); background: var(--color-surface); font-size: calc(var(--text-sm) * var(--ui-scale)); font-weight: 600; }
+ .pill.primary { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+ .pill:hover { transform: translateY(-1px); }
+ .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); margin-top: var(--space-4); }
+ .section-head { display: flex; align-items: end; justify-content: space-between; gap: var(--space-4); margin: var(--space-10) 0 var(--space-4); }
+ .section-head h2 { font-family: var(--font-display); font-size: calc(var(--text-xl) * var(--ui-scale)); font-weight: 400; margin: 0; }
+ .section-head p { margin: 0; color: var(--color-text-muted); max-width: 52ch; }
+ .links { display: grid; gap: var(--space-3); margin-top: var(--space-4); }
+ .link-card { padding: var(--space-4); text-decoration: none; display: block; background: var(--color-surface-2); }
+ .link-card:hover, .link-card:focus-visible { border-color: var(--color-primary); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+ .link-card strong { display: block; font-size: calc(var(--text-base) * var(--ui-scale)); margin-bottom: var(--space-1); }
+ .meta { font-size: calc(var(--text-xs) * var(--ui-scale)); color: var(--color-text-faint); margin-top: var(--space-2); }
+ .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: var(--space-5); }
+ .tip-list { padding-left: 1.1rem; margin: var(--space-3) 0 0; }
+ .tip-list li { margin-bottom: var(--space-2); }
+ .chooser { margin-top: var(--space-5); }
+ .chooser p { margin: 0 0 var(--space-3); color: var(--color-text-muted); }
+ footer { padding: var(--space-12) 0 var(--space-8); color: var(--color-text-muted); font-size: calc(var(--text-sm) * var(--ui-scale)); }
+ .footer-box { padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: var(--color-surface); }
+ .small { font-size: calc(var(--text-xs) * var(--ui-scale)); color: var(--color-text-faint); }
+ @media (max-width: 900px) {
+ .hero, .grid, .two-col { grid-template-columns: 1fr; }
+ h1 { max-width: none; }
+ .section-head { display: block; }
+ .section-head p { margin-top: var(--space-2); }
+ }
+ </style></head><body>
+ <a class="skip-link" href="#main">Skip to content</a>
+ <header class="topbar">
+ <div class="topbar-inner">
+ <a class="brand" href="#top" aria-label="Calm News for Christchurch">
+ <svg class="logo" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+ <rect x="4" y="6" width="40" height="30" rx="8" stroke="currentColor" stroke-width="3"></rect>
+ <path d="M12 16H36M12 23H29M12 30H24" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+ <path d="M32 36L40 42" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+ </svg>
+ <div class="brand-text">
+ <strong>Calm News for Christchurch</strong>
+ <span>Text size only: Little Issues or Big Issues</span>
+ </div>
+ </a>
+ <div class="topbar-actions">
+ <button class="size-toggle" type="button" data-size-toggle aria-label="Switch text size">Big Issues</button>
+ <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme"></button>
+ </div>
+ </div>
+ </header>
+ <main id="main" class="shell">
+ <section class="hero" id="top">
+ <div>
+ <div class="eyebrow">Calm news home page</div>
+ <h1>Calm News for Christchurch & Highcliffe</h1>
+ <p class="lead">A single calm starting point for faith stories, Christchurch and Highcliffe local news, UK government, and world events. Use the button above to choose <strong>Little Issues</strong> for smaller text or <strong>Big Issues</strong> for larger text — these names only refer to text size, not the importance of the news.</p>
+ <nav class="quick-links" aria-label="Quick sections">
+ <a class="pill primary" href="#local">Local news</a>
+ <a class="pill" href="#faith">Faith stories</a>
+ <a class="pill" href="#positive">Positive news</a>
+ <a class="pill" href="#uk">UK government</a>
+ <a class="pill" href="#world">World news</a>
+ <a class="pill" href="#perspectives">Other perspectives</a>
+ </nav>
+ <div class="chooser hero-card">
+ <h2>Reading size (text only)</h2>
+ <p>Pick the version that feels easiest on the eyes. Little Issues means smaller text. Big Issues means larger text only — not more serious news.</p>
+ <div class="mode-links" aria-label="Reading size choices">
+ <a class="pill primary" href="#" data-size-link="little">Little Issues</a>
+ <a class="pill" href="#" data-size-link="big">Big Issues</a>
+ </div>
+ </div>
+ </div>
+ <aside class="hero-card" aria-labelledby="start-here">
+ <h2 id="start-here">Suggested routine</h2>
+ <p>Keep it gentle: start local, check one UK page, read one world headline source, then finish with something faith-based or uplifting.</p>
+ <ul class="tip-list">
+ <li>Use the Big Issues button if you prefer large print on a Fire tablet.</li>
+ <li>Leave this page as the browser home page so it opens first.</li>
+ <li>Turn off autoplay in YouTube so this page becomes the main habit instead.</li>
+ <li>Check <strong>Positive news</strong> for uplifting stories to balance the day.</li>
+ </ul>
+ </aside>
+ </section>
+ <section id="local" aria-labelledby="local-title">
+ <div class="section-head">
+ <h2 id="local-title">Local: Christchurch & Highcliffe</h2>
+ <p>Local links for council decisions, planning, and community reporting around Christchurch and the BCP area.</p>
+ </div>
+ <div class="grid">
+ <article class="section-card">
+ <h2>Official local sources</h2>
+ <p>Best for decisions, meetings, planning, and council announcements.</p>
+ <div class="links">
+ <a class="link-card" href="https://www.bcpcouncil.gov.uk/news-hub" target="_blank" rel="noopener noreferrer">
+ <strong>BCP Council News Hub</strong>
+ Official Bournemouth, Christchurch and Poole Council news and service updates.
+ <div class="meta">Roadworks, local schemes, and council announcements.</div>
+ </a>
+ <a class="link-card" href="https://democracy.bcpcouncil.gov.uk/ieListMeetings.aspx?Act=earlier&D=202503201000&MD=ielistmeetings" target="_blank" rel="noopener noreferrer">
+ <strong>BCP Planning Meetings</strong>
+ Formal meeting pages with agendas and committee records.
+ <div class="meta">Useful for the direct paperwork rather than commentary.</div>
+ </a>
+ <a class="link-card" href="https://www.bcpcouncil.gov.uk/planning-and-building-control/planning-policy/neighbourhood-planning/completed-plans/highcliffe-and-walkford-neighbourhood-plan" target="_blank" rel="noopener noreferrer">
+ <strong>Highcliffe & Walkford Neighbourhood Plan</strong>
+ Planning policy and neighbourhood information specific to Highcliffe.
+ <div class="meta">Helpful for local development context.</div>
+ </a>
+ </div>
+ </article>
+ <article class="section-card">
+ <h2>Community & Independent reporting</h2>
+ <p>Independent views and community-led updates.</p>
+ <div class="links">
+ <a class="link-card" href="https://christchurchonline.co.uk/news" target="_blank" rel="noopener noreferrer">
+ <strong>Christchurch Online</strong>
+ Connecting local businesses, events, and community news across Christchurch.
+ <div class="meta">Great for positive community stories and town spotlights.</div>
+ </a>
+ <a class="link-card" href="https://www.highcliffevillage.com/community" target="_blank" rel="noopener noreferrer">
+ <strong>Highcliffe Village Community Hub</strong>
+ A collection of local resources and updates for Highcliffe residents.
+ <div class="meta">Specific focus on Highcliffe community events.</div>
+ </a>
+ <a class="link-card" href="https://www.bbc.com/news/topics/crx6dnl749jt" target="_blank" rel="noopener noreferrer">
+ <strong>BBC: BCP Council topic page</strong>
+ BBC reporting linked to BCP Council stories.
+ <div class="meta">A practical independent check.</div>
+ </a>
+ <a class="link-card" href="https://www.bbc.com/news/england/dorset" target="_blank" rel="noopener noreferrer">
+ <strong>BBC Dorset</strong>
+ Wider Dorset reporting with local transport and community stories.
+ <div class="meta">A good once-a-day local overview.</div>
+ </a>
+ </div>
+ </article>
+ </div>
+ </section>
+ <section id="faith" aria-labelledby="faith-title">
+ <div class="section-head">
+ <h2 id="faith-title">Faith and Christian news</h2>
+ <p>Christian and faith-based links without the emotionally loaded video-feed effect.</p>
+ </div>
+ <div class="grid">
+ <article class="section-card">
+ <h2>UK faith coverage</h2>
+ <div class="links">
+ <a class="link-card" href="https://premierchristian.news/?_locale=en" target="_blank" rel="noopener noreferrer">
+ <strong>Premier Christian News</strong>
+ UK-based Christian news with stories on public life and church life.
+ <div class="meta">The main faith-news bookmark.</div>
+ </a>
+ <a class="link-card" href="https://www.churchtimes.co.uk" target="_blank" rel="noopener noreferrer">
+ <strong>Church Times</strong>
+ Informed and independent reporting of Church and world news since 1863.
+ <div class="meta">Respected, traditional reporting.</div>
+ </a>
+ <a class="link-card" href="https://www.christiantoday.com" target="_blank" rel="noopener noreferrer">
+ <strong>Christian Today</strong>
+ Independent UK-based news on faith, culture, and society.
+ <div class="meta">Broad coverage of the Christian world.</div>
+ </a>
+ <a class="link-card" href="https://www.e-n.org.uk" target="_blank" rel="noopener noreferrer">
+ <strong>Evangelicals Now</strong>
+ Monthly newspaper with UK and world coverage from an evangelical perspective.
+ <div class="meta">Slower and more reflective.</div>
+ </a>
+ </div>
+ </article>
+ <article class="section-card">
+ <h2>Gentler round-ups</h2>
+ <div class="links">
+ <a class="link-card" href="https://thepourover.org" target="_blank" rel="noopener noreferrer">
+ <strong>The Pour Over</strong>
+ Short news round-ups with a Christian tone, attempting to stay neutral.
+ <div class="meta">Brief and low-drama.</div>
+ </a>
+ <a class="link-card" href="https://www.premier.org.uk/premier-peace" target="_blank" rel="noopener noreferrer">
+ <strong>Premier Peace</strong>
+ Scripture, gentle prayer, and calming music for a moment of quiet.
+ <div class="meta">Specially designed for calm and reflection.</div>
+ </a>
+ <a class="link-card" href="https://www.goodnews-paper.org.uk" target="_blank" rel="noopener noreferrer">
+ <strong>Good News newspaper</strong>
+ More testimonies and uplifting stories than hard news.
+ <div class="meta">Useful when you want something encouraging.</div>
+ </a>
+ </div>
+ </article>
+ </div>
+ </section>
+ <section id="positive" aria-labelledby="positive-title">
+ <div class="section-head">
+ <h2 id="positive-title">Positive news</h2>
+ <p>Uplifting stories and solutions-focused journalism to balance the harder news.</p>
+ </div>
+ <div class="grid">
+ <article class="section-card">
+ <h2>Uplifting journalism</h2>
+ <div class="links">
+ <a class="link-card" href="https://www.positive.news" target="_blank" rel="noopener noreferrer">
+ <strong>Positive News</strong>
+ UK-based magazine for "good journalism about good things," focusing on solutions.
+ <div class="meta">Great for a more hopeful perspective.</div>
+ </a>
+ <a class="link-card" href="https://www.goodnewsnetwork.org" target="_blank" rel="noopener noreferrer">
+ <strong>Good News Network</strong>
+ A long-running source for positive news stories from around the world.
+ <div class="meta">Good for a quick mood boost.</div>
+ </a>
+ </div>
+ </article>
+ <article class="section-card">
+ <h2>Daily inspiration</h2>
+ <div class="links">
+ <a class="link-card" href="https://www.dailygood.org" target="_blank" rel="noopener noreferrer">
+ <strong>DailyGood</strong>
+ Ad-free stories of kindness and community.
+ <div class="meta">One inspiring story per day.</div>
+ </a>
+ <a class="link-card" href="https://www.optimistdaily.com" target="_blank" rel="noopener noreferrer">
+ <strong>The Optimist Daily</strong>
+ Focuses on solutions for climate, health, and society.
+ <div class="meta">A proactive look at the world.</div>
+ </a>
+ </div>
+ </article>
+ </div>
+ </section>
+ <section id="uk" aria-labelledby="uk-title">
+ <div class="section-head">
+ <h2 id="uk-title">UK government and politics</h2>
+ <p>One official source plus two reporting sources makes a good honest mix.</p>
+ </div>
+ <div class="two-col">
+ <article class="section-card">
+ <h2>Official UK sources</h2>
+ <div class="links">
+ <a class="link-card" href="https://www.gov.uk/government/news" target="_blank" rel="noopener noreferrer">
+ <strong>GOV.UK News and Communications</strong>
+ Official UK Government announcements, statements and press releases.
+ <div class="meta">Best for the government's own wording.</div>
+ </a>
+ <a class="link-card" href="https://hansard.parliament.uk" target="_blank" rel="noopener noreferrer">
+ <strong>Hansard</strong>
+ The official report of what was said in Parliament.
+ <div class="meta">Very useful for checking what was actually said.</div>
+ </a>
+ </div>
+ </article>
+ <article class="section-card">
+ <h2>Reporting and context</h2>
+ <div class="links">
+ <a class="link-card" href="https://www.bbc.com/news/politics" target="_blank" rel="noopener noreferrer">
+ <strong>BBC Politics</strong>
+ Straightforward Westminster coverage and explainers.
+ <div class="meta">Good for regular use.</div>
+ </a>
+ <a class="link-card" href="https://news.sky.com/politics" target="_blank" rel="noopener noreferrer">
+ <strong>Sky News Politics</strong>
+ A second reporting angle on government and Parliament.
+ <div class="meta">Useful for comparison.</div>
+ </a>
+ </div>
+ </article>
+ </div>
+ </section>
+ <section id="world" aria-labelledby="world-title">
+ <div class="section-head">
+ <h2 id="world-title">World news</h2>
+ <p>Practical global pages to check once or twice a day without getting pulled into a recommendation engine.</p>
+ </div>
+ <div class="grid">
+ <article class="section-card">
+ <h2>Wire services</h2>
+ <div class="links">
+ <a class="link-card" href="https://www.reuters.com/world/" target="_blank" rel="noopener noreferrer">
+ <strong>Reuters World</strong>
+ Plain global reporting with minimal spin and clean headlines.
+ <div class="meta">Ideal default homepage.</div>
+ </a>
+ <a class="link-card" href="https://apnews.com/hub/world-news" target="_blank" rel="noopener noreferrer">
+ <strong>AP World News</strong>
+ Another fact-first world page with concise reporting.
+ <div class="meta">Good as a second check.</div>
+ </a>
+ </div>
+ </article>
+ <article class="section-card">
+ <h2>Broader context</h2>
+ <div class="links">
+ <a class="link-card" href="https://www.bbc.com/news/world" target="_blank" rel="noopener noreferrer">
+ <strong>BBC World</strong>
+ Helpful explainers and summaries for the biggest stories.
+ <div class="meta">Useful after Reuters or AP.</div>
+ </a>
+ <a class="link-card" href="https://www.euronews.com/news/international" target="_blank" rel="noopener noreferrer">
+ <strong>Euronews International</strong>
+ European and international coverage without the feel of social video feeds.
+ <div class="meta">Handy for Europe-facing news.</div>
+ </a>
+ </div>
+ </article>
+ </div>
+ </section>
+ <section id="perspectives" aria-labelledby="perspectives-title">
+ <div class="section-head">
+ <h2 id="perspectives-title">Other perspectives</h2>
+ <p>Thoughtful opinion and analysis as a calmer alternative to television news channels.</p>
+ </div>
+ <div class="grid">
+ <article class="section-card">
+ <h2>Opinion and analysis</h2>
+ <p>Covering politics and culture from outside the mainstream consensus, without the shouting.</p>
+ <div class="links">
+ <a class="link-card" href="https://unherd.com" target="_blank" rel="noopener noreferrer">
+ <strong>UnHerd</strong>
+ Long-form articles that question mainstream thinking from multiple directions.
+ <div class="meta">Slower and more considered than TV news channels.</div>
+ </a>
+ <a class="link-card" href="https://www.tortoisemedia.com" target="_blank" rel="noopener noreferrer">
+ <strong>Tortoise Media: Slow News</strong>
+ News that isn't just about being first, but about being thorough and calm.
+ <div class="meta">"A newsroom for what's driving the news."</div>
+ </a>
+ <a class="link-card" href="https://www.spectator.co.uk" target="_blank" rel="noopener noreferrer">
+ <strong>The Spectator</strong>
+ Britain’s oldest weekly magazine, centre-right, witty and readable.
+ <div class="meta">Free articles available without a subscription.</div>
+ </a>
+ <a class="link-card" href="https://thecritic.co.uk" target="_blank" rel="noopener noreferrer">
+ <strong>The Critic</strong>
+ British magazine with a similar feel to The Spectator — conservative-leaning and measured.
+ <div class="meta">Low on outrage, high on culture.</div>
+ </a>
+ </div>
+ </article>
+ <article class="section-card">
+ <h2>Fact checking</h2>
+ <p>Before believing a worrying headline, check here first.</p>
+ <div class="links">
+ <a class="link-card" href="https://fullfact.org" target="_blank" rel="noopener noreferrer">
+ <strong>Full Fact</strong>
+ The UK’s independent fact-checking organisation.
+ <div class="meta">Very useful companion to any news source.</div>
+ </a>
+ <a class="link-card" href="https://www.bbc.com/news/reality_check" target="_blank" rel="noopener noreferrer">
+ <strong>BBC Reality Check</strong>
+ BBC’s own fact-checking and explainer service.
+ <div class="meta">Good for a quick second opinion.</div>
+ </a>
+ </div>
+ </article>
+ </div>
+ </section>
+ <footer>
+ <div class="footer-box">
+ <p>Calm News for Christchurch — a simple, calm homepage for faith, local, UK government and world news.</p>
+ <p class="small">Little Issues = smaller text • Big Issues = larger text • text size only, not news importance.</p>
+ </div>
+ </footer>
+ </main>
+ <script>
+ (function () {
+ var root = document.documentElement;
+ var themeButton = document.querySelector('[data-theme-toggle]');
+ var sizeButton = document.querySelector('[data-size-toggle]');
+ var sizeLinks = document.querySelectorAll('[data-size-link]');
+ var theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+ var size = 'little';
+ function updateThemeButton() {
+ themeButton.innerHTML = theme === 'dark'
+ ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>'
+ : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+ themeButton.setAttribute('aria-label', 'Switch to ' + (theme === 'dark' ? 'light' : 'dark') + ' mode');
+ }
+ function updateSizeUI() {
+ root.setAttribute('data-size', size === 'big' ? 'big' : 'little');
+ sizeButton.textContent = size === 'big' ? 'Little Issues' : 'Big Issues';
+ sizeButton.setAttribute('aria-label', 'Text size is ' + (size === 'big' ? 'Big Issues (larger text)' : 'Little Issues (smaller text)') + '. Click to switch.');
+ sizeLinks.forEach(function (link) {
+ var active = link.getAttribute('data-size-link') === size;
+ link.classList.toggle('primary', active);
+ });
+ }
+ root.setAttribute('data-theme', theme);
+ updateThemeButton();
+ updateSizeUI();
+ themeButton.addEventListener('click', function () {
+ theme = theme === 'dark' ? 'light' : 'dark';
+ root.setAttribute('data-theme', theme);
+ updateThemeButton();
+ });
+ sizeButton.addEventListener('click', function () {
+ size = size === 'big' ? 'little' : 'big';
+ updateSizeUI();
+ });
+ sizeLinks.forEach(function (link) {
+ link.addEventListener('click', function (event) {
+ event.preventDefault();
+ size = link.getAttribute('data-size-link');
+ updateSizeUI();
+ });
+ });
+ })();
+ </script></body></html>
